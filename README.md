@@ -1,8 +1,8 @@
 # Pantry Chef 🍳
 
-![Pantry Chef Logo](https://via.placeholder.com/800x200?text=Pantry+Chef)
+![Superior Chef Logo](https://via.placeholder.com/800x200?text=Pantry+Chef)
 
-Pantry Chef is a smart web application that helps you discover delicious recipes based on ingredients you already have in your kitchen. No more food waste or last-minute grocery store trips!
+Superior Chef is a smart web application that helps you discover delicious recipes based on ingredients you already have in your kitchen. No more food waste or last-minute grocery store trips!
 
 ## ✨ Features
 
