@@ -1,4 +1,4 @@
-# Pantry Chef 🍳
+# Superior Chef 🍳
 
 ![Superior Chef Logo](https://via.placeholder.com/800x200?text=Pantry+Chef)
 
