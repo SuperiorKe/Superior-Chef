@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantry Chef - Smart Recipe Recommendations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-utensils text-2xl mr-3"></i>
+                    <h1 class="text-3xl font-bold">Superior Chef</h1>
+                </div>
+                <p class="hidden md:block text-primary-100 italic">Turn your ingredients into delicious meals</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- App Introduction -->
+        <section class="max-w-4xl mx-auto mb-10 text-center">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to Superior Chef</h2>
+            <p class="text-gray-600 mb-6">
+                Superior Chef helps you discover delicious recipes based on ingredients you already have. 
+                No more wasted food or trips to the grocery store for a single item!
+            </p>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">How It Works</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-3">
+                            <i class="fas fa-list text-primary-600"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-800 mb-2">1. Enter Ingredients</h4>
+                        <p class="text-gray-600 text-sm text-center">List the ingredients you have available in your kitchen</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-3">
+                            <i class="fas fa-search text-primary-600"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-800 mb-2">2. Get Recommendations</h4>
+                        <p class="text-gray-600 text-sm text-center">Our system finds recipes that match your ingredients</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-3">
+                            <i class="fas fa-utensils text-primary-600"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-800 mb-2">3. Start Cooking</h4>
+                        <p class="text-gray-600 text-sm text-center">Follow the recipe instructions to create your meal</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ingredient Input Section -->
+        <section class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 mb-8">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">What's in Your Kitchen?</h3>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="ingredients">
+                    Enter your available ingredients (comma-separated):
+                </label>
+                <div class="flex">
+                    <input type="text" id="ingredients" 
+                           class="flex-grow shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                           placeholder="e.g., eggs, avocado, beans, onions, tomatoes">
+                    <button onclick="getRecipe()" 
+                            class="ml-2 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center">
+                        <i class="fas fa-search mr-2"></i> Find Recipes
+                    </button>
+                </div>
+                <p class="mt-2 text-sm text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i> For best results, list all ingredients you'd like to use
+                </p>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="max-w-2xl mx-auto text-center py-8 hidden">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mb-4"></div>
+            <p class="text-gray-600">Finding the perfect recipe for you...</p>
+        </div>
+
+        <!-- Recipe Result Section -->
+        <section id="recipe-result" class="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mb-8 hidden">
+            <div id="recipe-image-container" class="w-full h-64 bg-gray-200 relative">
+                <img id="recipe-image" class="w-full h-full object-cover" src="" alt="Recipe Image">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <h2 id="recipe-name" class="absolute bottom-4 left-4 right-4 text-2xl font-bold text-white"></h2>
+            </div>
+            
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-shopping-basket mr-2 text-primary-600"></i> Ingredients
+                    </h3>
+                    <ul id="recipe-ingredients" class="list-disc list-inside text-gray-600 space-y-1"></ul>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-list-ol mr-2 text-primary-600"></i> Instructions
+                    </h3>
+                    <div id="recipe-instructions" class="text-gray-600 whitespace-pre-line"></div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button onclick="getRecipe()" 
+                            class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center">
+                        <i class="fas fa-random mr-2"></i> Try Another Recipe
+                    </button>
+                    <button onclick="window.print()" 
+                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center">
+                        <i class="fas fa-print mr-2"></i> Print Recipe
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- No Results Message -->
+        <div id="no-results" class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 text-center hidden">
+            <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">No Recipes Found</h3>
+            <p class="text-gray-600 mb-4">We couldn't find any recipes that match your ingredients. Try adding more ingredients or using different ones.</p>
+            <button onclick="document.getElementById('ingredients').focus()" 
+                    class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 transition duration-150 ease-in-out">
+                Try Different Ingredients
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-utensils text-xl mr-2"></i>
+                        <h2 class="text-xl font-bold">Superior Chef</h2>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-1">Turn your ingredients into delicious meals</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-gray-400 text-sm">&copy; 2023 Superior Chef. All rights reserved.</p>
+                    <p class="text-gray-500 text-xs mt-1">Powered by Spoonacular API</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function getRecipe() {
+            const ingredientsInput = document.getElementById('ingredients');
+            const ingredients = ingredientsInput.value.split(',').map(ing => ing.trim()).filter(ing => ing);
+            
+            if (ingredients.length === 0) {
+                alert('Please enter at least one ingredient');
+                return;
+            }
+
+            // Show loading indicator
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            document.getElementById('recipe-result').classList.add('hidden');
+            document.getElementById('no-results').classList.add('hidden');
+
+            try {
+                const response = await fetch('/get_recipe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ingredients }),
+                });
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').classList.add('hidden');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Show recipe result
+                    document.getElementById('recipe-result').classList.remove('hidden');
+                    document.getElementById('recipe-name').textContent = data.name;
+                    
+                    const ingredientsList = document.getElementById('recipe-ingredients');
+                    ingredientsList.innerHTML = data.ingredients.map(ing => `<li>${ing}</li>`).join('');
+                    
+                    document.getElementById('recipe-instructions').textContent = data.instructions;
+                    
+                    // Handle image if available
+                    const imageContainer = document.getElementById('recipe-image-container');
+                    const recipeImage = document.getElementById('recipe-image');
+                    
+                    if (data.image) {
+                        recipeImage.src = data.image;
+                        imageContainer.classList.remove('hidden');
+                    } else {
+                        // Use a placeholder image if no image is available
+                        recipeImage.src = 'https://via.placeholder.com/800x400?text=No+Image+Available';
+                    }
+
+                    // Scroll to recipe
+                    document.getElementById('recipe-result').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    const data = await response.json();
+                    // Show no results message
+                    document.getElementById('no-results').classList.remove('hidden');
+                    document.getElementById('no-results').scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                // Hide loading indicator
+                document.getElementById('loading-indicator').classList.add('hidden');
+                
+                // Show error message
+                alert('Error getting recipe. Please try again.');
+                console.error('Error:', error);
+            }
+        }
+
+        // Allow pressing Enter key in the input field to search
+        document.getElementById('ingredients').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                getRecipe();
+            }
+        });
+    </script>
+</body>
+</html> 
